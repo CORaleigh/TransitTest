@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>GoRaleigh Live Bus Digital Twin</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.33/esri/themes/dark/main.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://js.arcgis.com/4.33/"></script>
+  <script defer src="app8.js"></script>
+</head>
+<body>
+  <div id="viewDiv"></div>
+
+  <div class="app-shell">
+    <div class="top-bar">
+      <section class="brand-card">
+        <div class="eyebrow"><span class="pulse"></span>Live transit digital twin</div>
+        <h1 class="title">GoRaleigh Bus Operations</h1>
+        <div class="subtitle">Routes, stops, realtime vehicles, and 3D downtown context.</div>
+      </section>
+
+      <section class="control-card">
+        <div class="control-row">
+          <label for="routeFilter">Filter by route</label>
+          <select id="routeFilter">
+            <option value="">All routes</option>
+          </select>
+        </div>
+
+        <div class="button-grid">
+          <button id="btnDowntown">Downtown</button>
+          <!--<button id="btnStation">GoRaleigh Station</button>-->
+          <button id="btnFollowToggle">Follow bus</button>
+          <button id="btnRefresh">Refresh now</button>
+        </div>
+      </section>
+    </div>
+    <div class="bottom-panel">
+      <section class="stats-card">
+        <div class="stat">
+          <div id="busCount" class="stat-value">--</div>
+          <div class="stat-label">Buses</div>
+        </div>
+        <div class="stat">
+          <div id="routeCount" class="stat-value">--</div>
+          <div class="stat-label">Routes</div>
+        </div>
+        <div class="stat">
+          <div id="stopCount" class="stat-value">--</div>
+          <div class="stat-label">Stops</div>
+        </div>
+        <div class="stat updated-stat">
+          <div id="updatedAt" class="stat-value">--</div>
+          <div class="stat-label">Updated</div>
+        </div>
+        <div class="stat follow-stat">
+          <div id="followState" class="stat-value">No</div>
+          <div class="stat-label">Following</div>
+        </div>
+      </section>
+
+      <section id="busCards" class="bus-cards" data-vehicle-id="${vehicle}" aria-label="Live buses"></section>
+<!--       <section id="detailsCard" class="details-card">
+        <div id="detailsTitle" class="details-title">Selected feature</div>
+        <div id="detailsGrid" class="details-grid"></div>
+      </section> -->
+    </div>
+  </div>
+</body>
+</html>

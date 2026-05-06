@@ -1,0 +1,276 @@
+html,
+body,
+#viewDiv {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: #05070a;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.app-shell {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  color: #f4f7fb;
+}
+
+.top-bar {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  right: 18px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  pointer-events: none;
+}
+
+.brand-card,
+.control-card,
+.stats-card,
+.details-card,
+.bus-card {
+  pointer-events: auto;
+  background: rgba(10, 15, 24, 0.84);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.38);
+  backdrop-filter: blur(14px);
+  border-radius: 18px;
+}
+
+.brand-card {
+  padding: 14px 16px;
+  min-width: 280px;
+}
+
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #8fd7ff;
+  margin-bottom: 4px;
+  font-weight: 700;
+}
+
+.title {
+  font-size: 21px;
+  line-height: 1.15;
+  font-weight: 750;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: #b8c4d3;
+  margin-top: 6px;
+}
+
+.control-card {
+  width: 320px;
+  padding: 14px;
+}
+
+.control-row {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+label {
+  font-size: 12px;
+  color: #b8c4d3;
+  font-weight: 650;
+}
+
+select,
+input,
+button {
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  padding: 9px 10px;
+  font-size: 13px;
+  outline: none;
+}
+
+select option {
+  background: #111827;
+  color: #fff;
+}
+
+.button-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+button {
+  cursor: pointer;
+  transition: transform 140ms ease, background 140ms ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  background: rgba(143, 215, 255, 0.18);
+}
+
+button.active {
+  background: rgba(50, 232, 117, 0.18);
+}
+
+.follow-stat .stat-value {
+  color: #32e875;
+}
+
+.bottom-panel {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: 18px;
+  display: grid;
+  /* grid-template-columns: minmax(240px, auto) 1fr minmax(280px, 360px); */
+  grid-template-columns: minmax(240px, auto) 1fr;
+  align-items: end;
+  gap: 14px;
+  pointer-events: none;
+}
+
+ .bus-cards {
+  pointer-events: auto;
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 4px 2px;
+  scrollbar-width: thin;
+  min-width: 0;
+}
+
+
+.bus-card {
+  min-width: 168px;
+  padding: 11px 13px;
+  cursor: pointer;
+  transition: transform 140ms ease, background 140ms ease, border-color 140ms ease;
+}
+
+.bus-card:hover,
+.bus-card.active {
+  transform: translateY(-2px);
+  background: rgba(50, 232, 117, 0.16);
+  border-color: rgba(50, 232, 117, 0.55);
+}
+
+.bus-card-route {
+  font-size: 18px;
+  font-weight: 850;
+  line-height: 1.1;
+}
+
+.bus-card-meta {
+  margin-top: 5px;
+  font-size: 11px;
+  color: #b8c4d3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stats-card {
+  display: flex;
+  gap: 16px;
+  padding: 12px 14px;
+}
+
+.stat {
+  min-width: 82px;
+}
+
+.stat-value {
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.updated-stat .stat-value {
+  font-size: 15px;
+  padding-top: 6px;
+}
+
+.stat-label {
+  font-size: 11px;
+  color: #a9b5c5;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.details-card {
+  width: 360px;
+  padding: 14px;
+  display: none;
+}
+
+.details-card.visible {
+  display: block;
+}
+
+.details-title {
+  font-size: 16px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: 115px 1fr;
+  gap: 6px 10px;
+  font-size: 13px;
+}
+
+.details-grid .key {
+  color: #9eacbd;
+}
+
+.pulse {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #32e875;
+  box-shadow: 0 0 0 0 rgba(50, 232, 117, 0.75);
+  animation: pulse 1.8s infinite;
+  margin-right: 8px;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(50, 232, 117, 0.75); }
+  70% { box-shadow: 0 0 0 12px rgba(50, 232, 117, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(50, 232, 117, 0); }
+}
+
+.esri-ui-top-left {
+  top: 104px;
+}
+
+@media (max-width: 800px) {
+  .top-bar,
+  .bottom-panel {
+    left: 10px;
+    right: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .control-card,
+  .details-card {
+    width: auto;
+  }
+
+  .bus-cards {
+    max-width: 100%;
+  }
+}
