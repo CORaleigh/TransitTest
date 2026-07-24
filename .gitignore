@@ -1,0 +1,19 @@
+# Esri File Geodatabases and ArcGIS Pro working data — binary QA artifacts,
+# not part of the deployed static site. Keep these out of the gh-pages branch.
+QA_Data/
+QA_Data2/
+Exceptions.gdb/
+*.gdb/
+
+# ArcGIS Pro project lock/temp files
+*.aprx.lock
+*.bak
+
+# Standalone Digital Twin emulation app — not part of the deployed static site.
+emulation/
+
+# OS / editor cruft
+Thumbs.db
+.DS_Store
+.vscode/
+/emulation/

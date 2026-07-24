@@ -8,10 +8,12 @@
   <link rel="stylesheet" href="https://js.arcgis.com/4.33/esri/themes/dark/main.css" />
   <link rel="stylesheet" href="styles.css" />
   <script src="https://js.arcgis.com/4.33/"></script>
-  <script defer src="app8.js"></script>
+  <script defer src="app11.js"></script>
 </head>
 <body>
   <div id="viewDiv"></div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <div class="app-shell">
     <div class="top-bar">
@@ -31,13 +33,14 @@
 
         <div class="button-grid">
           <button id="btnDowntown">Downtown</button>
-          <!--<button id="btnStation">GoRaleigh Station</button>-->
-          <button id="btnFollowToggle">Follow bus</button>
+          <button id="btnFollowToggle" disabled aria-pressed="false" title="Select a bus first to follow it">Follow bus</button>
           <button id="btnRefresh">Refresh now</button>
         </div>
       </section>
     </div>
     <div class="bottom-panel">
+      <section id="selectedBus" class="selected-bus" aria-live="polite" hidden></section>
+      <div class="bottom-row">
       <section class="stats-card">
         <div class="stat">
           <div id="busCount" class="stat-value">--</div>
@@ -61,11 +64,8 @@
         </div>
       </section>
 
-      <section id="busCards" class="bus-cards" data-vehicle-id="${vehicle}" aria-label="Live buses"></section>
-<!--       <section id="detailsCard" class="details-card">
-        <div id="detailsTitle" class="details-title">Selected feature</div>
-        <div id="detailsGrid" class="details-grid"></div>
-      </section> -->
+      <section id="busCards" class="bus-cards" aria-label="Live buses"></section>
+      </div>
     </div>
   </div>
 </body>

@@ -1,2 +1,12 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Esri geodatabase / ArcGIS binaries — never normalize line endings
+*.gdbtable binary
+*.gdbtablx binary
+*.gdbindexes binary
+*.atx binary
+*.spx binary
+*.horizon binary
+*.aprx binary
+*.freelist binary

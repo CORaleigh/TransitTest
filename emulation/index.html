@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Digital Twin — Raleigh Buses (emulation)</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/5.1/esri/themes/dark/main.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <script type="module" src="https://js.arcgis.com/5.1/"></script>
+</head>
+<body>
+  <div class="app">
+    <!-- ===== MAP AREA ===== -->
+    <div class="map" id="map">
+      <!-- real ArcGIS 3D scene backdrop -->
+      <div id="viewDiv" class="viewdiv"></div>
+      <!-- stylized SVG fallback, only shown if the ArcGIS SDK fails to load -->
+      <svg class="city" id="city" viewBox="0 0 1920 780" preserveAspectRatio="xMidYMid slice" aria-hidden="true" hidden></svg>
+      <div class="map-vignette"></div>
+
+      <!-- top-left brand + line filter -->
+      <header class="brand">
+        <h1 class="brand-title">DIGITAL TWIN</h1>
+        <div class="brand-sub">RALEIGH BUSES</div>
+      </header>
+
+      <div class="line-filter" id="lineFilter" role="button" tabindex="0" aria-haspopup="listbox" aria-expanded="false">
+        <span class="lf-check" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <span class="lf-label" id="lineFilterLabel">ALL LINES</span>
+        <span class="lf-chevron" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <ul class="lf-menu" id="lineMenu" role="listbox" hidden></ul>
+      </div>
+
+      <!-- top-right weather + map controls -->
+      <div class="weather" id="weather" role="group" aria-label="Weather layer">
+        <button class="wx" data-wx="clear" aria-pressed="true" title="Clear">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><g stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="12" y1="2.5" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="21.5"/><line x1="2.5" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="21.5" y2="12"/><line x1="5.2" y1="5.2" x2="7" y2="7"/><line x1="17" y1="17" x2="18.8" y2="18.8"/><line x1="18.8" y1="5.2" x2="17" y2="7"/><line x1="7" y1="17" x2="5.2" y2="18.8"/></g></svg>
+        </button>
+        <button class="wx" data-wx="rain" aria-pressed="false" title="Rain">
+          <svg viewBox="0 0 24 24"><path d="M7 15a4 4 0 0 1 .3-7.9 5.2 5.2 0 0 1 10 .9A3.5 3.5 0 0 1 17 15z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><g stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><line x1="8.5" y1="17.5" x2="7.5" y2="20"/><line x1="12" y1="17.5" x2="11" y2="20"/><line x1="15.5" y1="17.5" x2="14.5" y2="20"/></g></svg>
+        </button>
+        <button class="wx" data-wx="snow" aria-pressed="false" title="Snow">
+          <svg viewBox="0 0 24 24"><g stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><line x1="12" y1="3" x2="12" y2="21"/><line x1="3.5" y1="7.5" x2="20.5" y2="16.5"/><line x1="20.5" y1="7.5" x2="3.5" y2="16.5"/><path d="M9.5 4.5L12 6l2.5-1.5M9.5 19.5L12 18l2.5 1.5"/></g></svg>
+        </button>
+      </div>
+
+      <div class="zoom" role="group" aria-label="Zoom">
+        <button class="zoom-btn" id="zoomIn" title="Zoom in">+</button>
+        <button class="zoom-btn" id="zoomOut" title="Zoom out">&minus;</button>
+      </div>
+      <button class="sort-btn" id="sortBtn" title="Sort">
+        <svg viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v16M7 4L4 7M7 4l3 3"/><path d="M17 20V4M17 20l3-3M17 20l-3-3"/></g></svg>
+      </button>
+
+      <!-- bottom-left mode switcher -->
+      <div class="toolbar" id="toolbar" role="tablist">
+        <button class="mode-btn active" id="modeRealtime" data-mode="realtime" role="tab" aria-selected="true">
+          <span class="mb-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 7v5l3.2 2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <span class="mb-text">REAL-TIME<br/>ALERTS</span>
+        </button>
+        <button class="mode-btn" id="modeCrash" data-mode="crash" role="tab" aria-selected="false">
+          <span class="mb-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M3.5 9.5h17M8 3v4M16 3v4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+          </span>
+          <span class="mb-text">HISTORIC<br/>CRASH DATA</span>
+        </button>
+        <button class="mode-btn" id="modeGraph" data-mode="graph" role="tab" aria-selected="false">
+          <span class="mb-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="6" cy="12" r="2.6"/><circle cx="17.5" cy="6" r="2.6"/><circle cx="17.5" cy="18" r="2.6"/><path d="M8.4 10.9l6.8-3.6M8.4 13.1l6.8 3.6" stroke-linecap="round"/></g></svg>
+          </span>
+          <span class="mb-text">GRAPH<br/>ANALYTICS</span>
+        </button>
+      </div>
+
+      <div class="data-credit">DATA: GORALEIGH GTFS-RT &bull; CITY OF RALEIGH OPEN DATA &bull; ESRI &bull; *FOR DEMONSTRATION PURPOSES ONLY</div>
+
+      <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    </div>
+
+    <!-- ===== BOTTOM DASHBOARD ===== -->
+    <div class="dash">
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-label">BUS LINES</div>
+          <div class="stat-value cyan" id="statLines">26</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <div class="stat-label">BUSES</div>
+          <div class="stat-value cyan" id="statBuses">300</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <div class="stat-label">ALERTS</div>
+          <div class="stat-value orange" id="statAlerts">2</div>
+          <div class="stat-sub">BUSES APPROACHING INCIDENTS</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <div class="stat-label">HIGH RISK</div>
+          <div class="stat-value red" id="statRisk">10</div>
+          <div class="stat-sub">BUSES AT INCIDENTS</div>
+        </div>
+
+        <div class="donut-wrap">
+          <svg class="donut" viewBox="0 0 120 120" aria-label="Risk percentage">
+            <circle class="donut-track" cx="60" cy="60" r="52" />
+            <circle class="donut-arc red-arc" cx="60" cy="60" r="52" />
+            <circle class="donut-arc orange-arc" cx="60" cy="60" r="52" />
+          </svg>
+          <div class="donut-label" id="donutPct">4%</div>
+        </div>
+      </div>
+
+      <div class="ticker">
+        <div class="ticker-track" id="tickerTrack"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

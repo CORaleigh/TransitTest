@@ -1,0 +1,14 @@
+{
+  "name": "nyc-digital-twin-emulation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Standalone visual emulation of the NYC Buses Digital Twin dashboard, with a Puppeteer screenshot harness.",
+  "type": "module",
+  "scripts": {
+    "shot": "node shot.js",
+    "shot:wide": "node shot.js --width 1900 --height 1000"
+  },
+  "devDependencies": {
+    "puppeteer": "^23.0.0"
+  }
+}
