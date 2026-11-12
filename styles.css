@@ -1,3 +1,23 @@
+/* GoRaleigh Digital Twin — "operations console" UI.
+   Flat, squared, near-black surfaces sitting over the 3D map, with a
+   cyan / amber / red operations palette. */
+:root {
+  --bg: #05070a;
+  --surface: rgba(9, 13, 20, 0.82);
+  --surface-solid: #070b11;
+  --bar: rgba(6, 9, 14, 0.94);
+  --border: rgba(255, 255, 255, 0.10);
+  --border-strong: rgba(255, 255, 255, 0.18);
+  --text: #e8eef5;
+  --text-muted: #8a97a8;
+  --text-dim: #63707f;
+  --accent: #3d9cff;      /* neutral figures, active state */
+  --amber: #f0932b;       /* attention */
+  --red: #e2452f;         /* high risk / live vehicle badges */
+  --green: #32e875;       /* following */
+  --radius: 4px;
+}
+
 html,
 body,
 #viewDiv {
@@ -6,7 +26,7 @@ body,
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background: #05070a;
+  background: var(--bg);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
@@ -14,14 +34,14 @@ body,
   position: absolute;
   inset: 0;
   pointer-events: none;
-  color: #f4f7fb;
+  color: var(--text);
 }
 
 .top-bar {
   position: absolute;
-  top: 18px;
-  left: 18px;
-  right: 18px;
+  top: 22px;
+  left: 26px;
+  right: 22px;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -29,48 +49,51 @@ body,
   pointer-events: none;
 }
 
-.brand-card,
-.control-card,
-.stats-card,
-.bus-card {
-  pointer-events: auto;
-  background: rgba(10, 15, 24, 0.84);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.38);
-  backdrop-filter: blur(14px);
-  border-radius: 18px;
-}
-
+/* Brand sits directly on the map — no card. */
 .brand-card {
-  padding: 14px 16px;
+  pointer-events: auto;
   min-width: 280px;
 }
 
 .eyebrow {
-  font-size: 11px;
-  letter-spacing: 0.14em;
+  display: flex;
+  align-items: center;
+  font-size: 10px;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: #8fd7ff;
-  margin-bottom: 4px;
-  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  font-weight: 600;
 }
 
 .title {
-  font-size: 21px;
-  line-height: 1.15;
-  font-weight: 750;
+  font-size: 30px;
+  line-height: 1.05;
+  font-weight: 300;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   margin: 0;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.6);
 }
 
 .subtitle {
-  font-size: 13px;
-  color: #b8c4d3;
-  margin-top: 6px;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 8px;
+  max-width: 340px;
 }
 
+/* Flat, squared control panel. */
 .control-card {
+  pointer-events: auto;
   width: 320px;
   padding: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
 }
 
 .control-row {
@@ -80,25 +103,28 @@ body,
 }
 
 label {
-  font-size: 12px;
-  color: #b8c4d3;
-  font-weight: 650;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 600;
 }
 
 select,
 input,
 button {
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.05);
   color: #fff;
-  padding: 9px 10px;
-  font-size: 13px;
+  padding: 10px 11px;
+  font-size: 12px;
+  letter-spacing: 0.04em;
   outline: none;
 }
 
 select option {
-  background: #111827;
+  background: #0b111a;
   color: #fff;
 }
 
@@ -106,18 +132,18 @@ select:focus-visible,
 input:focus-visible,
 button:focus-visible,
 .bus-card:focus-visible {
-  outline: 2px solid #8fd7ff;
+  outline: 1px solid var(--accent);
   outline-offset: 2px;
+  border-color: var(--accent);
 }
 
 button:disabled {
   cursor: not-allowed;
-  opacity: 0.45;
+  opacity: 0.4;
 }
 
 button:disabled:hover {
-  transform: none;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .button-grid {
@@ -128,38 +154,46 @@ button:disabled:hover {
 
 button {
   cursor: pointer;
-  transition: transform 140ms ease, background 140ms ease;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: background 140ms ease, border-color 140ms ease;
 }
 
 button:hover {
-  transform: translateY(-1px);
-  background: rgba(143, 215, 255, 0.18);
+  background: rgba(61, 156, 255, 0.16);
+  border-color: rgba(61, 156, 255, 0.5);
 }
 
 button.active {
-  background: rgba(50, 232, 117, 0.18);
+  background: rgba(61, 156, 255, 0.18);
+  border-color: var(--accent);
 }
 
 .follow-stat .stat-value {
-  color: #32e875;
+  color: var(--green);
 }
 
+/* Full-width dark band anchored to the bottom edge. */
 .bottom-panel {
   position: absolute;
-  left: 18px;
-  right: 18px;
-  bottom: 18px;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
   flex-direction: column;
-  gap: 12px;
   pointer-events: none;
+  background: linear-gradient(to top, var(--bar) 72%, rgba(6, 9, 14, 0));
+  padding: 22px 26px 16px;
+  gap: 14px;
 }
 
 .bottom-row {
   display: grid;
   grid-template-columns: minmax(240px, auto) 1fr;
   align-items: end;
-  gap: 14px;
+  gap: 24px;
 }
 
 .selected-bus {
@@ -170,11 +204,9 @@ button.active {
   gap: 12px;
   max-width: 460px;
   padding: 10px 12px;
-  background: rgba(10, 15, 24, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.38);
-  backdrop-filter: blur(14px);
-  border-radius: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
 }
 
 .selected-bus[hidden] {
@@ -183,13 +215,13 @@ button.active {
 
 .sb-route {
   font-size: 20px;
-  font-weight: 850;
+  font-weight: 800;
   line-height: 1;
   min-width: 40px;
   padding: 6px 10px;
   text-align: center;
   border: 1px solid;
-  border-radius: 10px;
+  border-radius: var(--radius);
 }
 
 .sb-body {
@@ -205,92 +237,117 @@ button.active {
 
 .sb-meta {
   font-size: 12px;
-  color: #b8c4d3;
+  color: var(--text-muted);
 }
 
 .sb-meta.stale {
-  color: #f6c85f;
+  color: var(--amber);
 }
 
 .sb-clear {
   margin-left: auto;
   padding: 6px 10px;
-  font-size: 12px;
+  font-size: 11px;
 }
 
- .bus-cards {
+/* Route strip along the very bottom. */
+.bus-cards {
   pointer-events: auto;
   display: flex;
-  gap: 10px;
+  gap: 0;
   overflow-x: auto;
-  padding: 4px 2px;
   scrollbar-width: thin;
   min-width: 0;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
 }
 
-
 .bus-card {
-  min-width: 168px;
-  padding: 11px 13px;
+  pointer-events: auto;
+  min-width: 152px;
+  padding: 8px 16px 8px 14px;
   cursor: pointer;
-  transition: transform 140ms ease, background 140ms ease, border-color 140ms ease;
+  background: transparent;
+  border: none;
+  border-right: 1px solid var(--border);
+  border-radius: 0;
+  transition: background 140ms ease;
 }
 
 .bus-card:hover,
 .bus-card.active {
-  transform: translateY(-2px);
-  background: rgba(50, 232, 117, 0.16);
-  border-color: rgba(50, 232, 117, 0.55);
+  background: rgba(61, 156, 255, 0.12);
+}
+
+.bus-card.active {
+  box-shadow: inset 0 -2px 0 var(--accent);
 }
 
 .bus-card.stale {
-  opacity: 0.82;
+  opacity: 0.8;
 }
 
 .bus-card.stale .bus-card-updated {
-  color: #f6c85f;
+  color: var(--amber);
 }
 
 .bus-card-route {
   font-size: 18px;
-  font-weight: 850;
+  font-weight: 800;
   line-height: 1.1;
+  color: var(--amber);
 }
 
 .bus-card-meta {
   margin-top: 5px;
   font-size: 11px;
-  color: #b8c4d3;
+  color: var(--text-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+/* Stats laid out horizontally with vertical dividers, big accent numbers. */
 .stats-card {
   display: flex;
-  gap: 16px;
-  padding: 12px 14px;
+  gap: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
 }
 
 .stat {
-  min-width: 82px;
+  min-width: 96px;
+  padding: 0 24px;
+  border-left: 1px solid var(--border);
 }
 
-.stat-value {
-  font-size: 22px;
-  font-weight: 800;
-}
-
-.updated-stat .stat-value {
-  font-size: 15px;
-  padding-top: 6px;
+.stat:first-child {
+  padding-left: 0;
+  border-left: none;
 }
 
 .stat-label {
-  font-size: 11px;
-  color: #a9b5c5;
+  font-size: 10px;
+  color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.14em;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-size: 34px;
+  font-weight: 300;
+  line-height: 1;
+  color: var(--accent);
+}
+
+.updated-stat .stat-value {
+  font-size: 16px;
+  font-weight: 500;
+  padding-top: 12px;
+  color: var(--text);
 }
 
 .toast {
@@ -301,12 +358,11 @@ button.active {
   z-index: 200;
   max-width: 420px;
   padding: 12px 18px;
-  border-radius: 12px;
-  background: rgba(10, 15, 24, 0.94);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius);
+  background: var(--surface-solid);
+  border: 1px solid var(--border-strong);
   box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(14px);
-  color: #f4f7fb;
+  color: var(--text);
   font-size: 14px;
   text-align: center;
   pointer-events: none;
@@ -323,10 +379,10 @@ button.active {
 
 .pulse {
   display: inline-block;
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: #32e875;
+  background: var(--green);
   box-shadow: 0 0 0 0 rgba(50, 232, 117, 0.75);
   animation: pulse 1.8s infinite;
   margin-right: 8px;
@@ -334,32 +390,40 @@ button.active {
 
 @keyframes pulse {
   0% { box-shadow: 0 0 0 0 rgba(50, 232, 117, 0.75); }
-  70% { box-shadow: 0 0 0 12px rgba(50, 232, 117, 0); }
+  70% { box-shadow: 0 0 0 10px rgba(50, 232, 117, 0); }
   100% { box-shadow: 0 0 0 0 rgba(50, 232, 117, 0); }
 }
 
 .esri-ui-top-left {
-  top: 104px;
+  top: 116px;
 }
 
 @media (max-width: 800px) {
-  .top-bar,
-  .bottom-panel {
-    left: 10px;
-    right: 10px;
+  .top-bar {
+    left: 14px;
+    right: 14px;
     display: flex;
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .bottom-panel {
+    padding: 16px 14px 12px;
   }
 
   .bottom-row {
     display: flex;
     flex-direction: column;
     align-items: stretch;
+    gap: 14px;
   }
 
   .control-card {
     width: auto;
+  }
+
+  .title {
+    font-size: 24px;
   }
 
   .selected-bus {

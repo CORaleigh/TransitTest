@@ -42,7 +42,7 @@ require([
     },
     routesUrl: "https://services.arcgis.com/v400IkDOw1ad7Yad/arcgis/rest/services/GoRaleigh_Routes/FeatureServer/0",
     stopsUrl: "https://services.arcgis.com/v400IkDOw1ad7Yad/arcgis/rest/services/GoRaleigh_BusStops/FeatureServer/0",
-    realtimeVehiclesItemId: "90339540b1fd4678bf474ab1ab5abe73",
+    realtimeVehiclesItemId: "5274781da96e4ea5bc512a99b5b4c509",
     buildingsItemId: "affa13965fe948cca694e356ef9a3004",
     refreshIntervalMinutes: 0.25,
     recentBusHours: 3,
@@ -1007,9 +1007,11 @@ require([
       // Convert feet to meters (1/4 mile = 1320 feet = 402.336 meters)
       const distanceInMeters = CONFIG.buildingHighlightDistance * 0.3048;
 
-      // Create a circle around the selected bus location.
+      // Create a circle around the selected bus location. Geodesic, because a
+      // planar circle in Web Mercator shrinks to ~81% of its ground radius here.
       const searchArea = new Circle({
         center: busGeometry,
+        geodesic: true,
         radius: distanceInMeters,
         radiusUnit: "meters"
       });
@@ -1053,7 +1055,7 @@ require([
     }
 
     const routeGeometry = routeFeature.geometry;
-    const routeBuffer = geometryEngine.buffer(routeGeometry, 200, "meters");
+    const routeBuffer = geometryEngine.geodesicBuffer(routeGeometry, 200, "meters");
 
     // Query stops that fall along or near the selected route
     const stopsQuery = stopsLayer.createQuery();
@@ -1631,9 +1633,8 @@ require([
   }
 
   function updateBusCards(activeBuses) {
-    const objectIdField = busesLayer.objectIdField;
     const cards = activeBuses.map((feature) => {
-      const oid = feature.attributes[objectIdField];
+      const vehicleId = selectedBusVehicleId(feature);
       const route = routeKey(safeAttr(feature, state.fields.busRoute, "--"));
       const vehicle = safeAttr(feature, state.fields.vehicleId, "--");
       const updated = safeAttr(feature, state.fields.vehicleTimestamp, "--");
@@ -1643,7 +1644,7 @@ require([
       const color = routeColor(route);
 
       return `
-        <article class="bus-card${active}${stale}" data-objectid="${escapeHtml(oid)}"
+        <article class="bus-card${active}${stale}" data-vehicle-id="${escapeHtml(vehicleId)}"
           role="button" tabindex="0"
           aria-label="Route ${escapeHtml(route)}, vehicle ${escapeHtml(vehicle)}, updated ${escapeHtml(relativeTime(updated))}"
           title="Updated ${escapeHtml(formatValue(updated))}"
@@ -1736,6 +1737,13 @@ require([
     }
   }
 
+  // Route measures are planar lengths in the view's Web Mercator units, which
+  // overstate ground distance by 1/cos(latitude); scale ground meters to match.
+  function groundMetersToMapUnits(meters, pointGeometry) {
+    const latitude = pointGeometry?.spatialReference?.isWebMercator ? pointGeometry.latitude : null;
+    return Number.isFinite(latitude) ? meters / Math.cos(latitude * Math.PI / 180) : meters;
+  }
+
   function routeDirectionCueForBus(routeGeometry, busFeature) {
     if (!routeGeometry || !busFeature?.geometry) return null;
 
@@ -1743,7 +1751,7 @@ require([
     const routeLength = routePosition?.totalLength || polylineLength(routeGeometry);
     if (!routePosition || routeLength <= 0) return null;
 
-    const cueLength = Math.min(CONFIG.routeDirectionCueFeet * 0.3048, routeLength);
+    const cueLength = Math.min(groundMetersToMapUnits(CONFIG.routeDirectionCueFeet * 0.3048, busFeature.geometry), routeLength);
     const directionSign = routeDirectionSign(
       routeGeometry,
       routePosition.measure,
@@ -1764,7 +1772,7 @@ require([
   // and update each graphic's geometry/symbol in place.
   const DIRECTION_DOT_COUNT = 7;
   const cueGraphics = {
-    rings: [new Graphic(), new Graphic(), new Graphic()],
+    rings: Array.from({ length: 3 }, () => new Graphic({ visible: false })),
     dots: Array.from({ length: DIRECTION_DOT_COUNT }, () => new Graphic({ visible: false }))
   };
   busArrivalPulseLayer.addMany([...cueGraphics.rings, ...cueGraphics.dots]);
@@ -1938,14 +1946,14 @@ require([
     clearBusSelection().catch((error) => console.error("Clear selection failed", error));
   });
 
+  // Select by vehicle id, not objectId: the card may have been rendered from a
+  // report that a newer row for the same vehicle has since superseded.
   async function activateBusCard(card) {
-    state.selectedBusObjectId = card.dataset.objectid;
-    state.selectedBusVehicleId = null;
+    state.selectedBusVehicleId = card.dataset.vehicleId;
+    state.selectedBusObjectId = null;
     state.followingBus = true;
     const activeBuses = await queryActiveBuses();
-    const selectedBus = activeBuses.find((bus) =>
-      String(selectedBusObjectId(bus)) === String(card.dataset.objectid)
-    );
+    const selectedBus = selectedBusFromFeatures(activeBuses);
     if (selectedBus) rememberSelectedBus(selectedBus);
     updateFollowButton();
     updateBusCards(activeBuses);
@@ -1963,7 +1971,7 @@ require([
 
   $("busCards").addEventListener("click", async (event) => {
     try {
-      const card = event.target.closest(".bus-card[data-objectid]");
+      const card = event.target.closest(".bus-card[data-vehicle-id]");
       if (!card) return;
       await activateBusCard(card);
     } catch (error) {
@@ -1973,7 +1981,7 @@ require([
 
   $("busCards").addEventListener("keydown", async (event) => {
     if (event.key !== "Enter" && event.key !== " " && event.key !== "Spacebar") return;
-    const card = event.target.closest(".bus-card[data-objectid]");
+    const card = event.target.closest(".bus-card[data-vehicle-id]");
     if (!card) return;
     event.preventDefault(); // stop Space from scrolling the strip
     try {
