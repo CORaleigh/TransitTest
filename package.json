@@ -1,0 +1,11 @@
+{
+  "name": "goraleigh-digital-twin",
+  "version": "1.0.0",
+  "description": "GoRaleigh Live Bus Digital Twin — static ArcGIS single-page app.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "node --test",
+    "serve": "npx serve ."
+  }
+}
